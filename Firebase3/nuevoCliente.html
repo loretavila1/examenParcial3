@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Nuevo Cliente</title>
+  </head>
+
+  <body>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+       https://firebase.google.com/docs/web/setup#available-libraries -->
+
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyBjtPv2Z0nQtLsGYLQlEkkQkI_wdlUQ8hE",
+      authDomain: "test-loreto4.firebaseapp.com",
+      databaseURL: "https://test-loreto4.firebaseio.com",
+      projectId: "test-loreto4",
+      storageBucket: "test-loreto4.appspot.com",
+      messagingSenderId: "286538316532",
+      appId: "1:286538316532:web:98bb7cbf56ad9df2ad3ca1"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+
+
+    var dataDB = firebase.database().ref('Clientes').push();
+
+    function enviar()
+    {
+      var nombre= document.getElementById('name')
+      var apellido= document.getElementById('surname')
+      var telefono = document.getElementById('phone')
+      dataDB.set({
+        nombre: nombre.value,
+        apellido: apellido.value,
+        telefono: telefono.value
+      });
+      alert('Cliente registrado correctamente');
+    }
+  </script>
+  <h1>Agregar nuevo Cliente</h1>
+  <form class="" action="" method="post">
+    <input type="text" name="name" id="name" placeholder="Escribe tu nombre">
+    <input type="text" name="surname" id="surname" placeholder="Escribe tu apellido">
+    <input type="number" name="phone" id="phone" maxlength="10" placeholder="Escribe tu telefono">
+    <button id="submit_button" type="submit" onclick="enviar()">Guardar</button>
+    <input type="button" onclick="location.href='cliente.html';" value="Regresar"/>
+  </form>
+  </body>
+</html>

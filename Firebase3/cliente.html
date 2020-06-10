@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Lista de Clientes</title>
+</head>
+<body>
+	<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase-app.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase-database.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+   <script>
+	 // Your web app's Firebase configuration
+   var firebaseConfig = {
+     apiKey: "AIzaSyBjtPv2Z0nQtLsGYLQlEkkQkI_wdlUQ8hE",
+     authDomain: "test-loreto4.firebaseapp.com",
+     databaseURL: "https://test-loreto4.firebaseio.com",
+     projectId: "test-loreto4",
+     storageBucket: "test-loreto4.appspot.com",
+     messagingSenderId: "286538316532",
+     appId: "1:286538316532:web:98bb7cbf56ad9df2ad3ca1"
+   };
+   // Initialize Firebase
+   firebase.initializeApp(firebaseConfig);
+
+var refDB = firebase.database().ref().child('Clientes');
+var usuarios={};
+
+ver();
+
+function ver()
+{
+refDB.on('value',function(datos)
+{
+	  $("tbody").children().remove();
+    usuarios=datos.val();
+    // Recorremos los productos y los mostramos
+    $.each(usuarios, function(indice,valor)
+    {
+        var tBody = document.getElementById('dataTable').lastElementChild;
+        var tr1 = document.createElement('tr');
+        tBody.appendChild(tr1);
+        var prevProducto='<td>'+valor.nombre+'</td>';
+        prevProducto+='<td>'+valor.apellido+'</td>';
+        prevProducto+='<td>'+valor.telefono+'</td>';
+        prevProducto+='<td><button type="button" class="btn btn-warning" onclick="editar(\''+indice+'\')">Editar</button></td>';
+        prevProducto+='<td><button type="button" class="btn btn-danger" onclick="borrar(\''+indice+'\')">Borrar</button></td>';
+        $(prevProducto).appendTo(tr1);
+
+    });
+
+},function(objetoError){
+    console.log('Error de lectura:'+objetoError.code);
+});
+}
+
+function editar(id)
+{
+    // Para pasar el ID a otro proceso lo hacemos a través de window.name
+    window.name= id;
+
+    // Cargamos la página editarproducto.html
+    location.assign('editar.html');
+}
+
+function borrar(id)
+{
+	if(confirm("Está seguro que desea borrar al cliente?")== true)
+	refDB.child(id).remove();
+}
+
+function buscar(usuario)
+{
+	if(usuario != '')
+	{
+
+	refDB.orderByChild('nombre').equalTo(usuario).limitToFirst(1).on('value',function(datos)
+	{
+		  $("tbody").children().remove();
+	    usuarios=datos.val();
+	    // Recorremos los productos y los mostramos
+	    $.each(usuarios, function(indice,valor)
+	    {
+	        var tBody = document.getElementById('dataTable').lastElementChild;
+	        var tr1 = document.createElement('tr');
+	        tBody.appendChild(tr1);
+	        var prevProducto='<td>'+valor.nombre+'</td>';
+	        prevProducto+='<td>'+valor.apellido+'</td>';
+	        prevProducto+='<td>'+valor.telefono+'</td>';
+	        prevProducto+='<td><button type="button" class="btn btn-warning" onclick="editar(\''+indice+'\')">Editar</button></td>';
+	        prevProducto+='<td><button type="button" class="btn btn-danger" onclick="borrar(\''+indice+'\')">Borrar</button></td>';
+	        $(prevProducto).appendTo(tr1);
+
+	    });
+
+	},function(objetoError){
+	    console.log('Error de lectura:'+objetoError.code);
+	});
+}
+else{
+	ver();
+}
+}
+
+	</script>
+<div class="container-fluid" id="listado">
+        <h1>Listado de Clientes</h1>
+				<form action="" method="post">
+					<label> Nombre:</label>
+					<input type="text" name="usuario" id="usuario">
+					<button type="button" onclick="buscar(usuario.value)">Buscar</button>
+					<input type="button" onclick="location.href='nuevoCliente.html';" value="Agregar"/>
+					<input type="button" onclick="location.href='menu.html';" value="Regresar"/>
+				</form>
+				<br><br>
+        <table id="dataTable" border="1px" border-color="#000" width="800px">
+          <thead>
+     <th>Nombre</th><th>Apellido</th><th>Telefono</th><th colspan="2">Acciones</th>
+  </thead>
+  <tbody></tbody>
+</table>
+    </div>
+</body>
+</html>

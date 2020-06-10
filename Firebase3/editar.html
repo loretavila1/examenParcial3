@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Editar Cliente</title>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<!--<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js"></script> -->
+</head>
+<body>
+	<h1 id="holaMundo"></h1>
+	<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase-app.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase-database.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+   <script>
+  // Your web app's Firebase configuration
+	var firebaseConfig = {
+ 	 apiKey: "AIzaSyBjtPv2Z0nQtLsGYLQlEkkQkI_wdlUQ8hE",
+ 	 authDomain: "test-loreto4.firebaseapp.com",
+ 	 databaseURL: "https://test-loreto4.firebaseio.com",
+ 	 projectId: "test-loreto4",
+ 	 storageBucket: "test-loreto4.appspot.com",
+ 	 messagingSenderId: "286538316532",
+ 	 appId: "1:286538316532:web:98bb7cbf56ad9df2ad3ca1"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+// Se conecta con la base de datos de Firebase
+var dataDB = firebase.database().ref('Clientes');
+
+ var userId= window.name;
+
+    var nombre, apellido, telefono;
+    var usuario={};
+
+    // Buscamos el artículo.
+    dataDB.child(userId).once('value',function(datos)
+    {
+        usuario=datos.val();
+
+        nombre= usuario.nombre;
+        apellido= usuario.apellido;
+        telefono=usuario.telefono;
+
+        $('#name').val(nombre);
+        $('#surname').val(apellido);
+        $('#phone').val(telefono);
+    });
+
+function actualizar() {
+  // Se asigna a una variable cada elemento input con su ID
+var nombre = document.getElementById('name');
+var apellido = document.getElementById('surname');
+var telefono = document.getElementById('phone');
+
+dataDB.child(userId).update({
+  nombre: nombre.value,
+  apellido: apellido.value,
+  telefono: telefono.value
+});
+
+    alert('Cliente actualizado');
+}
+</script>
+  <form action="" method="post">
+    <input id="name" class="input" type="text" value="" placeholder="Nombre" required /><br />
+    <input id="surname" class="input" type="text" value="" placeholder="Apellido" required /><br />
+  <input id="phone" class="input" type="number" value="" maxlength="10" placeholder="Telefono" required /><br />
+  <button id="submit_button" type="submit" onclick="actualizar()">Actualizar</button>
+  <input type="button" onclick="location.href='cliente.html';" value="Regresar"/>
+  </form>
+</body>
+</html>

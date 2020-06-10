@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Editar Prendas</title>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<!--<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js"></script> -->
+</head>
+<body>
+	<h1 id="holaMundo"></h1>
+	<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase-app.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase-database.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+   <script>
+  // Your web app's Firebase configuration
+	var firebaseConfig = {
+ 	 apiKey: "AIzaSyBjtPv2Z0nQtLsGYLQlEkkQkI_wdlUQ8hE",
+ 	 authDomain: "test-loreto4.firebaseapp.com",
+ 	 databaseURL: "https://test-loreto4.firebaseio.com",
+ 	 projectId: "test-loreto4",
+ 	 storageBucket: "test-loreto4.appspot.com",
+ 	 messagingSenderId: "286538316532",
+ 	 appId: "1:286538316532:web:98bb7cbf56ad9df2ad3ca1"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+// Se conecta con la base de datos de Firebase
+var dataDB = firebase.database().ref('Prendas');
+
+ var userId= window.name;
+
+    var codigo, descripcion, precio;
+    var usuario={};
+
+    // Buscamos el artículo.
+    dataDB.child(userId).once('value',function(datos)
+    {
+        usuario=datos.val();
+
+        codigo= usuario.codigo;
+        descripcion= usuario.descripcion;
+        precio=usuario.precio;
+
+        $('#code').val(codigo);
+        $('#desc').val(descripcion);
+        $('#price').val(precio);
+    });
+
+function actualizar() {
+  // Se asigna a una variable cada elemento input con su ID
+var codigo = document.getElementById('code');
+var descripcion = document.getElementById('desc');
+var precio = document.getElementById('price');
+
+dataDB.child(userId).update({
+  codigo: codigo.value,
+  descripcion: descripcion.value,
+  precio: precio.value
+});
+
+    alert('Prenda actualizada');
+}
+</script>
+  <form action="" method="post">
+    <input id="code" class="input" type="text" value="" placeholder="Codigo" required /><br />
+    <input id="desc" class="input" type="text" value="" placeholder="Descripcion" required /><br />
+  <input id="price" class="input" type="number" value="" maxlength="10" placeholder="Precio" required /><br />
+  <button id="submit_button" type="submit" onclick="actualizar()">Actualizar</button>
+  <input type="button" onclick="location.href='prenda.html';" value="Regresar"/>
+  </form>
+</body>
+</html>

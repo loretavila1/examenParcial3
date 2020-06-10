@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Punto de Venta</title>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <!--<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js"></script> -->
+</head>
+<body>
+	<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase-app.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase-database.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+ <script>
+  // Your web app's Firebase configuration
+	var firebaseConfig = {
+ 	 apiKey: "AIzaSyBjtPv2Z0nQtLsGYLQlEkkQkI_wdlUQ8hE",
+ 	 authDomain: "test-loreto4.firebaseapp.com",
+ 	 databaseURL: "https://test-loreto4.firebaseio.com",
+ 	 projectId: "test-loreto4",
+ 	 storageBucket: "test-loreto4.appspot.com",
+ 	 messagingSenderId: "286538316532",
+ 	 appId: "1:286538316532:web:98bb7cbf56ad9df2ad3ca1"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+// Se conecta con la base de datos de Firebase
+var dataDB = firebase.database().ref('Clientes');
+var dataDBP = firebase.database().ref('Prendas');
+var dataVP = firebase.database().ref('Empeno-Prenda');
+
+var usuarios={};
+var productos={};
+dataDB.on('value', function(datos)
+{
+  //$('usuarios').children().remove();
+  usuarios=datos.val();
+  var select= document.getElementById('usuarios');
+  $.each(usuarios, function(indice,valor)
+  {
+   var option= document.createElement("option");
+   option.setAttribute("value", indice);
+   option.setAttribute("label", valor.nombre);
+   select.appendChild(option);
+ });
+}, function(objetoError){
+  console.log('Error de lectura:'+objetoError.code);
+});
+
+getProductos();
+
+function getProductos()
+{
+  dataDBP.on('value', function(datos)
+  {
+  //$('usuarios').children().remove();
+  productos=datos.val();
+  for (var i = 1; i <=3; i++) {
+    var select= document.getElementById('product_' + i);
+    $.each(productos, function(indice,valor)
+    {
+     var option= document.createElement("option");
+     option.setAttribute("value", indice);
+     option.setAttribute("label", valor.descripcion);
+     select.appendChild(option);
+   });
+  }
+});
+}
+
+function getPrecio(productx, preciox)
+{
+  document.getElementById(preciox).value="";
+  var producto=dataDBP.child(productx);
+  producto.on('value', function (data){
+    var prod=data.val();
+    document.getElementById(preciox).value=prod.precio;
+  });
+}
+
+function calcImporte(cant, precio, importe)
+{
+  document.getElementById(importe).value="";
+  var imp=cant * precio;
+  document.getElementById(importe).value=imp;
+}
+
+function guardarVenta() {
+  // Extraer la clave del usuario
+  var user = document.getElementById('usuarios');
+  // Extraer la fecha del sistema
+  var d = new Date();
+  var m= d.getMonth()+1;
+  var mes= (m<10)? '0'+m:m;
+  var fechag =  d.getFullYear() + "-" + mes + "-" + d.getDate();
+  //Guardando la venta
+  dataDB.child(user.value).child('ventas').push({
+    fecha: fechag
+  });
+  alert('Empeño registrado');
+}
+
+function calcularTotal()
+{
+	var num1= parseInt(document.getElementById('precio_1').value);
+  var num2= parseInt(document.getElementById('precio_2').value);
+  var num3= parseInt(document.getElementById('precio_3').value);
+
+    let arr= [num1, num2, num3];
+
+    var total=0;
+
+    for(let i=0; i<3; i++){
+        if(isNaN(arr[i]) === false){
+            total+=arr[i];
+        }
+    }
+	var art1= document.getElementById('precio_1');
+	var art2= document.getElementById('precio_2');
+	var art3= document.getElementById('precio_3');
+
+	let arr1 = [art1.value, art2.value, art3.value];
+
+		let cont=0;
+
+		for(let i=0; i<arr1.length; i++){
+				if(arr1[i]!=''){
+						cont++;
+				}
+		}
+		dataVP.push({
+			pzas: cont,
+      total: total
+    });
+
+    return total, (cont);
+
+
+}
+
+</script>
+<h1>Punto de Empeño</h1>
+<form action="" method="post">
+  <input type="hidden" id="idVenta">
+  <select id="usuarios">
+    <option value="0">Elige un Cliente</option>
+  </select>
+  <button id="generarVenta" type="button" onclick="guardarVenta()">Iniciar</button>
+	<input type="button" onclick="location.href='menu.html';" value="Regresar"/>
+  <h3>Detalles del Empeño</h3>
+  <table>
+    <thead>
+      <th>Prenda</th>
+      <th>Precio</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <select id="product_1" onchange="getPrecio(this.value,'precio_1')">
+            <option value="0">Elige Prenda</option>
+          </select>
+        </td>
+        <td>
+          <input type="number" id="precio_1">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <select id="product_2" onchange="getPrecio(this.value,'precio_2')">
+            <option value="0">Elige Prenda</option>
+          </select>
+        </td>
+        <td>
+          <input type="number" id="precio_2">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <select id="product_3" onchange="getPrecio(this.value,'precio_3')">
+            <option value="0">Elige Prenda</option>
+          </select>
+        </td>
+        <td>
+          <input type="number" id="precio_3">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+  <div>
+    <button id="finalizar" type="button" onclick="calcularTotal('idVenta');">Finalizar</button>
+  </div>
+</form>
+</body>
+</html>
